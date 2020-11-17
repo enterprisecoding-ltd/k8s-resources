@@ -63,7 +63,7 @@ spec:
       serviceAccount: nfs-provisioner
       containers:
         - name: nfs-provisioner
-          image: quay.io/external_storage/nfs-ganesha-server-and-provisioner:latest
+          image: quay.io/enterprisecoding/nfs-server-and-provisioner:latest
           ports:
             - name: nfs
               containerPort: 2049
@@ -101,7 +101,7 @@ spec:
                 - DAC_READ_SEARCH
                 - SYS_RESOURCE
           args:
-            - "-provisioner=example.com/nfs"
+            - "-provisioner=enterprisecoding.com/nfs"
           env:
             - name: POD_IP
               valueFrom:
