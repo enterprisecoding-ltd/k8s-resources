@@ -87,7 +87,7 @@ EOF
 
 JOIN_COMMAND=$(kubeadm token create --print-join-command)
 
-ssh ${WORKER_NODE_USER}@${WORKER_NODE_IP} https://raw.githubusercontent.com/enterprisecoding-ltd/k8s-resources/main/k8s-installation-2node/install-worker.sh | sh -
+ssh ${WORKER_NODE_USER}@${WORKER_NODE_IP} curl -sfL https://raw.githubusercontent.com/enterprisecoding-ltd/k8s-resources/main/k8s-installation-2node/install-worker.sh | sh -
 ssh ${WORKER_NODE_USER}@${WORKER_NODE_IP} $JOIN_COMMAND
 
 echo "Waiting worker node to be ready"
