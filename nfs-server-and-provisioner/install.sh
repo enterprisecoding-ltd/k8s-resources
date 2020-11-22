@@ -1,3 +1,5 @@
+#!/bin/bash
+
 NAMESPACE=nfs-server
 BASE_URL=https://raw.githubusercontent.com/enterprisecoding-ltd/k8s-resources/main/nfs-server-and-provisioner
 

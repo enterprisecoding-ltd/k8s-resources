@@ -1,3 +1,5 @@
+#!/bin/bash
+
 read -p 'Worker node ip address? ' WORKER_NODE_IP
 read -p 'Worker node user? ' WORKER_NODE_USER
 
