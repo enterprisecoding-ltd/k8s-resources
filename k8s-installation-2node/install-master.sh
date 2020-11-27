@@ -32,7 +32,7 @@ sed -i.bak -r 's/(.+ swap .+)/#\1/' /etc/fstab
 sudo setenforce 0
 sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
-yum install -y yum-utils device-mapper-persistent-data lvm2
+yum install -y yum-utils device-mapper-persistent-data lvm2 bash-completion
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y docker-ce
 
@@ -91,6 +91,12 @@ JOIN_COMMAND=$(kubeadm token create --print-join-command)
 
 ssh -t ${WORKER_NODE_USER}@${WORKER_NODE_IP} "curl -sfL https://raw.githubusercontent.com/enterprisecoding-ltd/k8s-resources/main/k8s-installation-2node/install-worker.sh | sh -"
 ssh -t ${WORKER_NODE_USER}@${WORKER_NODE_IP} "$JOIN_COMMAND"
+
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+echo "alias k=kubectl" >> ~/.bashrc
+echo "complete -F __start_kubectl k" >> ~/.bashrc
+
+source ~/.bashrc
 
 echo "Waiting worker node to be ready"
 RET=1
