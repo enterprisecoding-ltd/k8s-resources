@@ -14,7 +14,8 @@ ssh-keygen -q -f ~/.ssh/id_rsa -N ""
 
 ssh-copy-id ${WORKER_NODE_USER}@${WORKER_NODE_IP}
 
-yum install sshpass -y
+yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
+yum install sshpass jq -y
 
 # RKE User
 useradd rke
@@ -102,7 +103,7 @@ APIRESPONSE=$(curl -sk 'https://127.0.0.1/v3/token' -H 'content-type: applicatio
 APITOKEN=`echo $APIRESPONSE | jq -r .token`
 
 #Rancher sunucu adresini ayarla
-RANCHER_SERVER="https://${WORKER_NODE_IP}.nip.io"
+RANCHER_SERVER="https://${MASTER_IP}.nip.io"
 curl -sk 'https://127.0.0.1/v3/settings/server-url' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" -X PUT --data-binary '{"name":"server-url","value":"'"${RANCHER_SERVER}"'"}'
    
 #Telemetriyi kapat
@@ -118,7 +119,7 @@ CLUSTERRESPONSE=`curl -s 'https://127.0.0.1/v3/cluster' -H 'content-type: applic
 CLUSTERID=`echo $CLUSTERRESPONSE | jq -r .id`
 
 # Cluster kayıt token'ı oluştur
-curl -s 'https://127.0.0.1/v3/clusterregistrationtoken' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{"type":"clusterRegistrationToken","clusterId":"'$CLUSTERID'"}' --insecure > /dev/null
+curl -s 'https://127.0.0.1/v3/clusterregistrationtoken' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{"type":"clusterRegistrationToken","clusterId":"'$CLUSTERID'"}' --insecure
 
 # Master bayrakları
 MASTER_ROLEFLAGS="--etcd --controlplane --worker"
@@ -127,9 +128,11 @@ MASTER_ROLEFLAGS="--etcd --controlplane --worker"
 WORKER_ROLEFLAGS="--worker"
 
 # node komutu oluştur
-AGENTCMD=`curl -s 'https://127.0.0.1/v3/clusterregistrationtoken?id="'$CLUSTERID'"' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --insecure | jq -r '.data[].nodeCommand' | head -1`
+AGENTCMD=`curl -s 'https://127.0.0.1/v3/clusterregistrationtoken?id="'$CLUSTERID'"' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --insecure | jq -r '.data[].insecureCommand' | head -1`
 
-MASTER_DOCKERRUNCMD="$AGENTCMD $MASTER_ROLEFLAGS"
-echo "$MASTER_DOCKERRUNCMD" > /tmp/komut
-chmod +x /tmp/komut
-/tmp/komut
+echo "$MASTER_DOCKERRUNCMD" > /tmp/agentcmd.sh
+chmod +x /tmp/agentcmd.sh
+/tmp/agentcmd.sh
+
+rm -f agentcmd.sh
+rm -f install-master.sh
