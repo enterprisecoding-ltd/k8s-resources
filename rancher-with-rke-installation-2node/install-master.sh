@@ -126,9 +126,11 @@ curl -s 'https://127.0.0.1/v3/clusterregistrationtoken' -H 'content-type: applic
 # node komutu oluştur
 AGENTCMD=`curl -s 'https://127.0.0.1/v3/clusterregistrationtoken?id="'$CLUSTERID'"' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --insecure | jq -r '.data[].insecureCommand' | head -1`
 
+echo "curl -s 'https://127.0.0.1/v3/clusterregistrationtoken?id='$CLUSTERID' -H 'content-type: application/json' -H 'Authorization: Bearer $APITOKEN' --insecure | jq -r '.data[].insecureCommand' | head -1" > /tmp/debug
+
 echo "$AGENTCMD" > /tmp/agentcmd.sh
 chmod +x /tmp/agentcmd.sh
-/tmp/agentcmd.sh
 
-rm -f agentcmd.sh
+sleep 5
+/tmp/agentcmd.sh
 rm -f install-master.sh
