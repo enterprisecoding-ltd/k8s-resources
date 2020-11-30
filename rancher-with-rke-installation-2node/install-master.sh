@@ -5,10 +5,12 @@ MASTER_IP=$(hostname -I | cut -d' ' -f1)
 
 read -p 'Worker node ip address? ' WORKER_NODE_IP
 read -p 'Worker node user? ' WORKER_NODE_USER
-read -p 'RKE user password? ' RKE_PASSWD
 
 RANCHER_PASS=$(openssl rand -base64 12)
 echo $RANCHER_PASS > /root/rancher_sifresi
+
+RKE_PASSWD=$(openssl rand -base64 12)
+echo $RKE_PASSWD > /root/rke_sifresi
 
 ssh-keygen -q -f ~/.ssh/id_rsa -N ""
 
