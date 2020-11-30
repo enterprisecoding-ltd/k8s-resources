@@ -123,16 +123,10 @@ CLUSTERID=`echo $CLUSTERRESPONSE | jq -r .id`
 # Cluster kayıt token'ı oluştur
 curl -s 'https://127.0.0.1/v3/clusterregistrationtoken' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{"type":"clusterRegistrationToken","clusterId":"'$CLUSTERID'"}' --insecure
 
-# Master bayrakları
-MASTER_ROLEFLAGS="--etcd --controlplane --worker"
-
-# Worker bayrakları
-WORKER_ROLEFLAGS="--worker"
-
 # node komutu oluştur
 AGENTCMD=`curl -s 'https://127.0.0.1/v3/clusterregistrationtoken?id="'$CLUSTERID'"' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --insecure | jq -r '.data[].insecureCommand' | head -1`
 
-echo "$MASTER_DOCKERRUNCMD" > /tmp/agentcmd.sh
+echo "$AGENTCMD" > /tmp/agentcmd.sh
 chmod +x /tmp/agentcmd.sh
 /tmp/agentcmd.sh
 
